@@ -64,3 +64,23 @@ You can reply to the email you received if you have any doubt.
 In order to submit your solution, create your own Git repository and send us by email when it is ready.
 
 Thank you very much for your time and good luck!
+
+# Solution
+
+- I assumed every trip would start with some sort ot transport, so hotel bookings not following some travel are ignored
+- I assumed every trip would start from **BASE**, so trips starting somewhere else are ignored
+- I assumed one reservation would not have segments from different trips
+- Every trip starting from **BASE** is a separate trip (even if technically can be a plane change)
+
+## Run solution
+Istall deps with
+
+    mix deps.get
+
+Use `print_trips.sh` script
+
+    ./print_trips.sh ./input.txt
+
+Or `print_trips` `mix` target
+
+    mix print_trips ./input.txt
