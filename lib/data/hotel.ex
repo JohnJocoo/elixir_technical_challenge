@@ -1,15 +1,14 @@
 defmodule FCM.Data.Hotel do
-
   alias FCM.Data.DateTimeUtil
 
   @enforce_keys [:iata, :date_first, :date_last]
   defstruct [:iata, :date_first, :date_last]
 
   @type t :: %__MODULE__{
-    iata: String.t(),
-    date_first: Date.t(),
-    date_last: Date.t()
-  }
+          iata: String.t(),
+          date_first: Date.t(),
+          date_last: Date.t()
+        }
 
   @pattern ~r/(?<iata>[a-zA-Z]+)\s+(?<from>[\d-]+)\s+->\s+(?<to>[\d-]+)/
 
@@ -23,7 +22,8 @@ defmodule FCM.Data.Hotel do
   """
   @spec parse(String.t()) :: {:ok, t()} | {:error, String.t()}
   def parse(text) do
-    with {:format, %{
+    with {:format,
+          %{
             "iata" => iata,
             "from" => from,
             "to" => to

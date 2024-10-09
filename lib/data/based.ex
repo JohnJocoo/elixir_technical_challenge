@@ -1,11 +1,10 @@
 defmodule FCM.Data.Based do
-
   @enforce_keys [:iata]
   defstruct [:iata]
 
   @type t :: %__MODULE__{
-    iata: String.t()
-  }
+          iata: String.t()
+        }
 
   @doc """
   Parse Based from text.
@@ -24,5 +23,4 @@ defmodule FCM.Data.Based do
       {_, _} -> {:error, "Invalid IATA code: #{iata}"}
     end
   end
-
 end

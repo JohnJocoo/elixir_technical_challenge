@@ -5,7 +5,7 @@ defmodule FCM.MixProject do
     [
       app: :itinerary,
       version: "0.1.0",
-      elixir: "~> 1.16",
+      elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases(),
@@ -30,7 +30,7 @@ defmodule FCM.MixProject do
   defp aliases do
     [
       print_trips: "run -e \"FCM.print_trips_from_file(System.argv() |> Enum.at(0))\"",
-      "test.ci": ["test --color --max-cases=10"],
+      "test.ci": ["test --color --max-cases=10"]
     ]
   end
 end

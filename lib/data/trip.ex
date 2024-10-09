@@ -1,5 +1,4 @@
 defmodule FCM.Data.Trip do
-
   alias FCM.Data.Transport
   alias FCM.Data.Hotel
 
@@ -7,8 +6,8 @@ defmodule FCM.Data.Trip do
   defstruct [:segments]
 
   @type t :: %__MODULE__{
-    segments: [Transport.t() | Hotel.t()]
-  }
+          segments: [Transport.t() | Hotel.t()]
+        }
 
   @flight_change_hours_default 24
 
@@ -33,6 +32,7 @@ defmodule FCM.Data.Trip do
   """
   @spec iata_final(t()) :: String.t() | nil
   def iata_final(%__MODULE__{segments: []}), do: nil
+
   def iata_final(%__MODULE__{segments: segments}) do
     segments
     |> Enum.filter(&match?(%Transport{}, &1))
@@ -45,18 +45,24 @@ defmodule FCM.Data.Trip do
   """
   @spec iatas_staying(t()) :: [String.t()]
   def iatas_staying(%__MODULE__{segments: []}), do: []
+
   def iatas_staying(%__MODULE__{segments: segments} = trip) do
     iata_from = iata_from(trip)
 
     [_ | second_elements] = segments
+
     Enum.zip(segments, second_elements ++ [nil])
     |> Enum.map(fn
       {%Transport{}, %Hotel{iata: iata}} ->
         iata
 
-      {%Transport{iata_to: iata, date_time_arrival: arrive_at}, %Transport{date_time_departure: depart_at}} ->
+      {%Transport{iata_to: iata, date_time_arrival: arrive_at},
+       %Transport{date_time_departure: depart_at}} ->
         change_hours = NaiveDateTime.diff(depart_at, arrive_at, :hour)
-        flight_change_hours = Application.get_env(:fcm, :flight_change_hours, @flight_change_hours_default)
+
+        flight_change_hours =
+          Application.get_env(:fcm, :flight_change_hours, @flight_change_hours_default)
+
         if change_hours >= flight_change_hours do
           iata
         else

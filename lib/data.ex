@@ -1,18 +1,15 @@
 defmodule FCM.Data do
-
   alias FCM.Data.Based
   alias FCM.Data.Hotel
   alias FCM.Data.Transport
 
-  defstruct [
-    based: nil,
-    reservations: []
-  ]
+  defstruct based: nil,
+            reservations: []
 
   @type t :: %__MODULE__{
-    based: Based.t(),
-    reservations: [Hotel.t() | Transport.t()]
-  }
+          based: Based.t(),
+          reservations: [Hotel.t() | Transport.t()]
+        }
 
   @pattern_based ~r/^BASED:\s+(.+)/
   @pattern_reservation ~r/^RESERVATION/
@@ -65,6 +62,7 @@ defmodule FCM.Data do
 
   defp parse_based(line, %__MODULE__{based: nil} = data) do
     [_, based_text] = Regex.run(@pattern_based, line)
+
     case Based.parse(based_text) do
       {:ok, based} -> {:cont, %__MODULE__{data | based: based}}
       {:error, error} -> {:halt, {:error, error}}
@@ -75,6 +73,7 @@ defmodule FCM.Data do
     [_, kind, segment_rest] = Regex.run(@pattern_segment, line)
     kind_normal = String.trim(kind) |> String.downcase()
     segment_text = "#{kind}#{segment_rest}"
+
     case Map.get(@segment_module_map, kind_normal) do
       nil ->
         {:halt, {:error, "Invalid segment kind: #{kind}"}}

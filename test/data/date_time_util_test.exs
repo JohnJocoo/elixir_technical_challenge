@@ -15,11 +15,13 @@ defmodule FCM.Data.DateTimeUtilTest do
     end
 
     test "2024-10-05 12:00:00.000" do
-      assert {:ok, ~N[2024-10-05 12:00:00.000]} == DateTimeUtil.parse_date_time("2024-10-05 12:00:00.000")
+      assert {:ok, ~N[2024-10-05 12:00:00.000]} ==
+               DateTimeUtil.parse_date_time("2024-10-05 12:00:00.000")
     end
 
     test "5 October 2024 13:00" do
-      assert {:ok, ~N[2024-10-05 13:00:00]} == DateTimeUtil.parse_date_time("5 October 2024 13:00")
+      assert {:ok, ~N[2024-10-05 13:00:00]} ==
+               DateTimeUtil.parse_date_time("5 October 2024 13:00")
     end
 
     test "Tomorrow 5pm" do

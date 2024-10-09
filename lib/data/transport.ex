@@ -1,17 +1,16 @@
 defmodule FCM.Data.Transport do
-
   alias FCM.Data.DateTimeUtil
 
   @enforce_keys [:kind, :iata_from, :iata_to, :date_time_departure, :date_time_arrival]
   defstruct [:kind, :iata_from, :iata_to, :date_time_departure, :date_time_arrival]
 
   @type t :: %__MODULE__{
-    kind: :flight | :train,
-    iata_from: String.t(),
-    iata_to: String.t(),
-    date_time_departure: NaiveDateTime.t(),
-    date_time_arrival: NaiveDateTime.t()
-  }
+          kind: :flight | :train,
+          iata_from: String.t(),
+          iata_to: String.t(),
+          date_time_departure: NaiveDateTime.t(),
+          date_time_arrival: NaiveDateTime.t()
+        }
 
   @pattern ~r/(?<kind>[a-zA-Z]+)\s+(?<iata_from>[a-zA-Z]+)\s+(?<date_from>[\d-]+\s+[\d:]+)\s+->\s+(?<iata_to>[a-zA-Z]+)\s+(?<date_to>[\d:]+)/
 
@@ -25,7 +24,8 @@ defmodule FCM.Data.Transport do
   """
   @spec parse(String.t()) :: {:ok, t()} | {:error, String.t()}
   def parse(text) do
-    with {:format, %{
+    with {:format,
+          %{
             "kind" => kind,
             "iata_from" => iata_from,
             "date_from" => date_from,
@@ -33,18 +33,19 @@ defmodule FCM.Data.Transport do
             "date_to" => date_to
           }} <- {:format, Regex.named_captures(@pattern, text)},
          {:kind, {:ok, kind_atom}} <-
-          {:kind, parse_kind(kind)},
+           {:kind, parse_kind(kind)},
          {:iata_from, 3, ^iata_from, _} <-
-          {:iata_from, String.length(iata_from), String.upcase(iata_from), iata_from},
+           {:iata_from, String.length(iata_from), String.upcase(iata_from), iata_from},
          {:iata_to, 3, ^iata_to, _} <-
-          {:iata_to, String.length(iata_to), String.upcase(iata_to), iata_to},
+           {:iata_to, String.length(iata_to), String.upcase(iata_to), iata_to},
          {:date_from, {:ok, date_time_departure}, _} <-
-          {:date_from, DateTimeUtil.parse_date_time(date_from), date_from},
+           {:date_from, DateTimeUtil.parse_date_time(date_from), date_from},
          {:date_to, {:ok, time_arrival}, _} <-
-          {:date_to, DateTimeUtil.parse_time(date_to), date_to} do
+           {:date_to, DateTimeUtil.parse_time(date_to), date_to} do
       {:ok, date_time_arrival} =
         NaiveDateTime.to_date(date_time_departure)
         |> NaiveDateTime.new(time_arrival)
+
       {
         :ok,
         %__MODULE__{

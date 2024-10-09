@@ -1,5 +1,4 @@
 defmodule FCM.Data.DateTimeUtil do
-
   @doc """
   Parse NaiveDateTime from arbiterary text.
 
