@@ -3,8 +3,12 @@ defmodule FCM do
   alias FCM.Data
   alias FCM.Data.{Based, Hotel, Transport, Trip}
 
-  @flight_change_hours 24
+  @flight_change_hours_default 24
 
+  @doc """
+  Print trips from a file to stdout.
+  """
+  @spec print_trips_from_file(String.t()) :: :ok
   def print_trips_from_file(path) do
     {:ok, reservations} = read_reservations_from_file(path)
     trips = trips_from_reservations(reservations)
@@ -37,9 +41,12 @@ defmodule FCM do
       end)
       IO.puts("")
     end)
-
   end
 
+  @doc """
+  Create trips from reservations.
+  """
+  @spec trips_from_reservations(Data.t()) :: [Trip.t()]
   def trips_from_reservations(%Data{based: %Based{iata: iata_based}} = data) do
     hotels_by_iata = reservations_to_hotels_by_iata(data.reservations)
     {trips_start, transport_by_iata} =
@@ -57,6 +64,10 @@ defmodule FCM do
     |> Enum.reverse()
   end
 
+  @doc """
+  Read reservations from a file.
+  """
+  @spec read_reservations_from_file(String.t()) :: {:ok, Data.t()} | {:error, String.t()}
   def read_reservations_from_file(path) do
     File.open!(path, [:read, :utf8], fn file ->
       IO.stream(file, :line)
@@ -98,12 +109,6 @@ defmodule FCM do
   defp create_trip(initial_transports, hotels_by_iata, transport_by_iata) do
     create_trip_impl(initial_transports, [], hotels_by_iata, transport_by_iata)
   end
-
-  #defp create_trip_impl([], segments, hotels_by_iata, transport_by_iata) do
-  #  trip = Enum.reverse(segments) |> Trip.new()
-  #
-  #  {trip, hotels_by_iata, transport_by_iata}
-  #end
 
   defp create_trip_impl([%Transport{} = step | transports], [], hotels_by_iata, transport_by_iata) do
     create_trip_impl(transports, [step], hotels_by_iata, transport_by_iata)
@@ -156,7 +161,9 @@ defmodule FCM do
     %Transport{iata_to: iata_at, date_time_arrival: arrived},
     %Transport{iata_from: iata_from, date_time_departure: departure}) do
 
-    iata_from == iata_at && NaiveDateTime.diff(departure, arrived, :hour) < @flight_change_hours
+    flight_change_hours = Application.get_env(:fcm, :flight_change_hours, @flight_change_hours_default)
+
+    iata_from == iata_at && NaiveDateTime.diff(departure, arrived, :hour) < flight_change_hours
   end
 
   defp segment_fits_transport?(

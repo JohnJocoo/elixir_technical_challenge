@@ -4,9 +4,15 @@ defmodule FCM.Data do
   alias FCM.Data.Hotel
   alias FCM.Data.Transport
 
-  defstruct [:based, :reservations]
+  defstruct [
+    based: nil,
+    reservations: []
+  ]
 
-  @type t :: %__MODULE__{}
+  @type t :: %__MODULE__{
+    based: Based.t(),
+    reservations: [Hotel.t() | Transport.t()]
+  }
 
   @pattern_based ~r/^BASED:\s+(.+)/
   @pattern_reservation ~r/^RESERVATION/
@@ -18,8 +24,12 @@ defmodule FCM.Data do
     "train" => Transport
   }
 
+  @doc """
+  Parse reservations from text.
+  """
+  @spec parse(Enum.t()) :: {:ok, t()} | {:error, String.t()}
   def parse(lines) do
-    Enum.reduce_while(lines, %__MODULE__{reservations: []}, &parse_line/2)
+    Enum.reduce_while(lines, %__MODULE__{}, &parse_line/2)
     |> then(fn
       %__MODULE__{reservations: reservations} = data ->
         reversed_reservations =

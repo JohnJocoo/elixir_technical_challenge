@@ -1,9 +1,20 @@
 defmodule FCM.Data.Based do
 
+  @enforce_keys [:iata]
   defstruct [:iata]
 
-  @type t :: %__MODULE__{}
+  @type t :: %__MODULE__{
+    iata: String.t()
+  }
 
+  @doc """
+  Parse Based from text.
+
+  ## Examples
+
+      iex> Based.parse("NRT")
+      {:ok, %Based{iata: "NRT"}}
+  """
   @spec parse(String.t()) :: {:ok, t()} | {:error, String.t()}
   def parse(text) do
     iata = String.trim(text)

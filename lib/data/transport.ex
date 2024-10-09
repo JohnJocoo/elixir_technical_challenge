@@ -2,12 +2,27 @@ defmodule FCM.Data.Transport do
 
   alias FCM.Data.DateTimeUtil
 
+  @enforce_keys [:kind, :iata_from, :iata_to, :date_time_departure, :date_time_arrival]
   defstruct [:kind, :iata_from, :iata_to, :date_time_departure, :date_time_arrival]
 
-  @type t :: %__MODULE__{}
+  @type t :: %__MODULE__{
+    kind: :flight | :train,
+    iata_from: String.t(),
+    iata_to: String.t(),
+    date_time_departure: NaiveDateTime.t(),
+    date_time_arrival: NaiveDateTime.t()
+  }
 
   @pattern ~r/(?<kind>[a-zA-Z]+)\s+(?<iata_from>[a-zA-Z]+)\s+(?<date_from>[\d-]+\s+[\d:]+)\s+->\s+(?<iata_to>[a-zA-Z]+)\s+(?<date_to>[\d:]+)/
 
+  @doc """
+  Parse Transport reservation from text.
+
+  ##Examples
+
+      iex> Transport.parse("Flight NRT 2020-01-01 12:00 -> HND 13:00")
+      {:ok, %Transport{kind: :flight, iata_from: "NRT", iata_to: "HND", date_time_departure: ~N[2020-01-01 12:00:00], date_time_arrival: ~N[2020-01-01 13:00:00]}}
+  """
   @spec parse(String.t()) :: {:ok, t()} | {:error, String.t()}
   def parse(text) do
     with {:format, %{

@@ -67,13 +67,13 @@ Thank you very much for your time and good luck!
 
 # Solution
 
-- I assumed every trip would start with some sort ot transport, so hotel bookings not following some travel are ignored
-- I assumed every trip would start from **BASE**, so trips starting somewhere else are ignored
+- I assumed every trip would start with some sort of transport, so hotel bookings not following some travel are ignored
+- I assumed every trip would start from _BASE_, so trips starting somewhere else are ignored
 - I assumed one reservation would not have segments from different trips
-- Every trip starting from **BASE** is a separate trip (even if technically can be a plane change)
+- Every trip starting from _BASE_ is a separate trip (even if technically can be a plane change)
 
 ## Run solution
-Istall deps with
+Install deps with
 
     mix deps.get
 
